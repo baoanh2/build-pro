@@ -3,7 +3,7 @@ import Layout from "@/app/components/Layout";
 import Loading from "@/app/components/Loading";
 import TextFieldCustom from "@/app/components/TextFieldCustom";
 import { useAuthStore } from "@/app/store/useAuthStore";
-import { useRoleStore } from "@/app/store/useUsersStore";
+import { useRoleStore } from "@/app/store/useRoleStore";
 import { KeyboardArrowUp } from "@mui/icons-material";
 import { Box, Button, InputLabel, MenuItem, Select } from "@mui/material";
 import axios from "axios";

@@ -6,7 +6,7 @@ import { useAuthStore } from "../store/useAuthStore";
 import axios from "axios";
 import { useStore } from "../store/useStore";
 import Link from "next/link";
-import { useRoleStore } from "../store/useUsersStore";
+import { useRoleStore } from "../store/useRoleStore";
 import {
   TextField,
   FormControl,
@@ -179,7 +179,7 @@ const page = () => {
         <TableCustom
           totalPageNumber={totalPages}
           headCell={HeadCell}
-          dataSource={UserList}
+          dataSource={list}
           handlePageChange={handleChange}
           page={page}
           onSort={handleRequestSort}

@@ -23,12 +23,10 @@ import EditIcon from "@mui/icons-material/Edit";
 import AddCircle from "@mui/icons-material/AddCircle";
 import { Search } from "@mui/icons-material";
 import { redirect } from "next/navigation";
-import Loading from "../components/Loading";
 
 const page = () => {
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
   const { token, session } = useAuthStore();
-  const showAction = useStore((state) => state.showActionUser);
   const setShowAction = useStore((state) => state.setShowActionUser);
   const [list, setList] = useState<any>();
   const [search, setSearch] = useState<string>("");
@@ -38,7 +36,6 @@ const page = () => {
   const [active, setActive] = useState<any>(false);
   const [order, setOrder] = useState<"asc" | "desc">("asc");
   const [orderBy, setOrderBy] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(true);
 
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPageNumber(value);

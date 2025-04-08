@@ -22,7 +22,6 @@ export const useAuthStore = create<IAuth>()(
       },
       logOut: () => {
         signOut();
-        // sessionStorage.removeItem("sidebar-session");
         set({ session: null, token: null });
       },
     }),
