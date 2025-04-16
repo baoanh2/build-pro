@@ -44,7 +44,6 @@ const CreateRole = () => {
           },
         }
       );
-      console.log(res);
       if (res.status === 200) {
         toast.success("Create Role Success");
       } else if (res.status === 400) {

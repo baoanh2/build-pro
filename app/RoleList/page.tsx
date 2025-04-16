@@ -23,19 +23,34 @@ import EditIcon from "@mui/icons-material/Edit";
 import AddCircle from "@mui/icons-material/AddCircle";
 import { Search } from "@mui/icons-material";
 import { redirect } from "next/navigation";
+import { useRoleStore } from "../stores/role/store";
+import {
+  selectIsLoading,
+  selectPageNumber,
+  selectPageSize,
+  selectRoles,
+  selectSearch,
+  selectTotalPages,
+} from "../stores/role/selectors";
 
-const page = () => {
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-  const { token, session } = useAuthStore();
+const PageOfRole = () => {
+  const { session } = useAuthStore();
   const setShowAction = useStore((state) => state.setShowActionUser);
-  const [list, setList] = useState<any>();
-  const [search, setSearch] = useState<string>("");
-  const [pageNumber, setPageNumber] = useState<any>(1);
-  const [pageSize, setPageSize] = useState<number | undefined>();
-  const [totalPages, setTotalPages] = useState<number | undefined>();
   const [active, setActive] = useState<any>(false);
   const [order, setOrder] = useState<"asc" | "desc">("asc");
   const [orderBy, setOrderBy] = useState<string>("");
+
+  const roles = useRoleStore(selectRoles);
+  const loading = useRoleStore(selectIsLoading);
+  const totalPage = useRoleStore(selectTotalPages);
+  const search = useRoleStore(selectSearch);
+  const pageNumber = useRoleStore(selectPageNumber);
+  const pageSize = useRoleStore(selectPageSize);
+
+  const fetchRoles = useRoleStore((state) => state.fetchRoles);
+  const setSearch = useRoleStore((state) => state.setSearch);
+  const setPageNumber = useRoleStore((state) => state.setPageNumber);
+  const setPageSize = useRoleStore((state) => state.setPageSize);
 
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPageNumber(value);
@@ -49,7 +64,6 @@ const page = () => {
     const isAsc = orderBy === capitalizedProperty && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(capitalizedProperty);
-    console.log(orderBy);
   };
   function lowercaseFirstLetter(val: string) {
     return val.charAt(0).toLowerCase() + String(val).slice(1);
@@ -57,32 +71,29 @@ const page = () => {
   function capitalizeFirstLetter(val: string) {
     return String(val).charAt(0).toUpperCase() + String(val).slice(1);
   }
-  const fetchData = async () => {
-    try {
-      const { data } = await axios.get(
-        `${API_BASE_URL}/roles?pageNumber=${pageNumber}&pageSize=${pageSize}&searchText=${search}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      const listOfData = data?.data.results;
-      console.log(data?.data);
-      setTotalPages(data?.data.totalPages);
-      setList(listOfData);
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
+  //   try {
+  //     const { data } = await axios.get(
+  //       `${API_BASE_URL}/roles?pageNumber=${pageNumber}&pageSize=${pageSize}&searchText=${search}`,
+  //       {
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       }
+  //     );
+  //     const listOfData = data?.data.results;
+  //     setList(listOfData);
+  //   } catch (error) {
+  //     console.error("Error:", error);
+  //   }
+  // };
   useEffect(() => {
     if (!session) {
       redirect("/SignIn");
     }
   }, [session]);
   useEffect(() => {
-    fetchData();
+    fetchRoles();
   }, [search, active, pageNumber]);
   return (
     <Layout>
@@ -149,12 +160,12 @@ const page = () => {
           </Link>
         </div>
         <TableCustom
-          dataSource={list}
+          dataSource={roles}
           headCell={HeadCell}
           onSort={handleRequestSort}
           order={order as "asc" | "desc"}
           orderBy={lowercaseFirstLetter(orderBy as string)}
-          totalPageNumber={totalPages}
+          totalPageNumber={totalPage}
           handlePageChange={handleChange}
           page={pageNumber}
         />
@@ -163,7 +174,7 @@ const page = () => {
   );
 };
 
-export default page;
+export default PageOfRole;
 
 const RoleList = [
   {

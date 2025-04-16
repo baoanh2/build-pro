@@ -61,7 +61,6 @@ const CreateUser = () => {
 
   const handleCreate = async (e: React.MouseEvent<unknown>) => {
     e.preventDefault();
-    console.log("Create");
     if (
       !userDetail.email.trim() ||
       !userDetail.roles.trim() ||
@@ -89,10 +88,8 @@ const CreateUser = () => {
       );
       if (res.status === 200) {
         toast.success("Create User successfull");
-        console.log(res);
       }
     } catch (error: any) {
-      console.log(error);
       toast.error(
         "Error:",
         error.response?.data?.message
@@ -106,9 +103,6 @@ const CreateUser = () => {
       fetchRole(token);
     }
   }, [token]);
-  useEffect(() => {
-    console.log(userDetail);
-  }, [userDetail]);
   useEffect(() => {
     if (!session) {
       redirect("/SignIn");

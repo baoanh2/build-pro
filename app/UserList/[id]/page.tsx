@@ -10,12 +10,12 @@ import axios from "axios";
 import { redirect, useParams } from "next/navigation";
 import React, { useState, useEffect, use } from "react";
 import { toast, ToastContainer } from "react-toastify";
-const page = () => {
+const UserListById = () => {
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
   const { id } = useParams();
   const session = useAuthStore((state) => state.session);
   const token = session?.accessToken;
-  const { fetchRole, roles } = useRoleStore();
+  const { roles, fetchRole } = useRoleStore();
   const [loading, setLoading] = useState<boolean>(true);
   const [updatedData, setUpdatedData] = useState({
     email: "",
@@ -40,28 +40,27 @@ const page = () => {
   const handleChange = (e: any) => {
     setUpdatedData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
-  const getUserData = async () => {
-    try {
-      const { data } = await axios.get(`${API_BASE_URL}/users/${id}`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      setUpdatedData({
-        email: data.data.email,
-        firstName: data.data.firstName,
-        lastName: data.data.lastName,
-        isDeleted: data.data.isDeleted,
-        roles: data.data.roleId,
-      });
-    } catch (error) {
-      console.log("Error:", error);
-    }
-  };
+  // const getUserData = async () => {
+  //   try {
+  //     const { data } = await axios.get(`${API_BASE_URL}/users/${id}`, {
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //     });
+  //     setUpdatedData({
+  //       email: data.data.email,
+  //       firstName: data.data.firstName,
+  //       lastName: data.data.lastName,
+  //       isDeleted: data.data.isDeleted,
+  //       roles: data.data.roleId,
+  //     });
+  //   } catch (error) {
+  //     console.log("Error:", error);
+  //   }
+  // };
   const handleUpdate = async (e: any) => {
     e.preventDefault();
-    console.log(updatedData);
     try {
       const res = await axios.put(
         `${API_BASE_URL}/users/${id}`,
@@ -88,7 +87,6 @@ const page = () => {
       } else {
         toast.error("Error in updating user");
       }
-      console.log(res);
     } catch (error) {
       console.log(error);
     }
@@ -99,6 +97,25 @@ const page = () => {
     }
   }, [session]);
   useEffect(() => {
+    const getUserData = async () => {
+      try {
+        const { data } = await axios.get(`${API_BASE_URL}/users/${id}`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setUpdatedData({
+          email: data.data.email,
+          firstName: data.data.firstName,
+          lastName: data.data.lastName,
+          isDeleted: data.data.isDeleted,
+          roles: data.data.roleId,
+        });
+      } catch (error) {
+        console.log("Error:", error);
+      }
+    };
     fetchRole(token);
     getUserData();
   }, [token]);
@@ -267,4 +284,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default UserListById;

@@ -29,9 +29,9 @@ import TextFieldCustom from "../components/TextFieldCustom";
 
 const SignIn = () => {
   const router = useRouter();
+  const setSession = useAuthStore((state) => state.setSession);
   const [visibility, setVisibility] = useState(false);
   const session = useAuthStore((state) => state.session);
-  const setSession = useAuthStore((state) => state.setSession);
   const [userSignIn, setUserSignIn] = useState({
     username: "",
     password: "",
@@ -53,7 +53,6 @@ const SignIn = () => {
         password: userSignIn.password,
         redirect: false,
       });
-      console.log("Result", result);
       if (result?.status === 401) {
         toast.error(
           result?.error ? result?.error : "Invalid username or password"

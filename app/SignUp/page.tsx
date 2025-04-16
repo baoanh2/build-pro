@@ -39,16 +39,11 @@ const SignUp = () => {
   const [visibility, setVisibility] = useState(false);
   const handleChange = (e: any) => {
     setUser((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-    // console.log(user);
   };
-  useEffect(() => {
-    console.log(user);
-  }, [user]);
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Ensure all required fields are filled
     if (
       !user.email.trim() ||
       !user.username.trim() ||
@@ -71,8 +66,6 @@ const SignUp = () => {
         mobilePhone: user.mobilePhone,
         role: user.role,
       });
-
-      console.log(res);
 
       if (res.status === 200) {
         toast.success("Sign Up Success");
@@ -134,9 +127,6 @@ const SignUp = () => {
       ),
     },
   ];
-  useEffect(() => {
-    console.log(user);
-  }, [user]);
   return (
     <>
       <NavBar />

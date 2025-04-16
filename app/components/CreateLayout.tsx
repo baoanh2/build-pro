@@ -10,7 +10,7 @@ import {
   SelectChangeEvent,
   Typography,
 } from "@mui/material";
-import { KeyboardArrowUp, Label } from "@mui/icons-material";
+import { KeyboardArrowUp } from "@mui/icons-material";
 import Grid from "@mui/material/Grid2";
 import React, { useEffect } from "react";
 import TextFieldCustom from "./TextFieldCustom";
@@ -35,7 +35,7 @@ const CreateLayout: React.FC<CreateCustomProps> = ({
   handleChange,
 }) => {
   const { token } = useAuthStore();
-  const { fetchRole, roles } = useRoleStore();
+  const { fetchRole } = useRoleStore();
   const createChangeHandler =
     (property: any) =>
     (event: React.ChangeEvent<unknown> | SelectChangeEvent<unknown>) => {
@@ -43,7 +43,6 @@ const CreateLayout: React.FC<CreateCustomProps> = ({
     };
   useEffect(() => {
     fetchRole(token);
-    console.log(roles);
   }, [token]);
   return (
     <>

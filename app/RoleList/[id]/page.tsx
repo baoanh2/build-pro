@@ -10,7 +10,7 @@ import { redirect, useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 
-const page = () => {
+const RoleListById = () => {
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
   const { id } = useParams();
   const { token, session } = useAuthStore();
@@ -21,31 +21,29 @@ const page = () => {
     description: "",
     isDeleted: false,
   });
-  const getRolebyId = async () => {
-    try {
-      const { data } = await axios.get(`${API_BASE_URL}/roles/${id}`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      console.log(data);
-      setList(data.data);
-      setUpdatedData({
-        name: data.data.name,
-        description: data.data.description,
-        isDeleted: data.data.isDeleted,
-      });
-    } catch (error) {
-      console.log("Error:", error);
-    }
-  };
+  // const getRolebyId = async () => {
+  //   try {
+  //     const { data } = await axios.get(`${API_BASE_URL}/roles/${id}`, {
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //     });
+  //     setList(data.data);
+  //     setUpdatedData({
+  //       name: data.data.name,
+  //       description: data.data.description,
+  //       isDeleted: data.data.isDeleted,
+  //     });
+  //   } catch (error) {
+  //     console.log("Error:", error);
+  //   }
+  // };
   const handleChange = (e: any) => {
     setUpdatedData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
   const handleUpdate = async (e: any) => {
     e.preventDefault();
-    console.log("Update");
     try {
       const res = await axios.put(
         `${API_BASE_URL}/roles`,
@@ -61,7 +59,6 @@ const page = () => {
           },
         }
       );
-      console.log(res);
       if (res.status === 200) {
         toast.success("Update role success");
       } else {
@@ -72,9 +69,24 @@ const page = () => {
     }
   };
   useEffect(() => {
-    console.log(updatedData);
-  }, [updatedData]);
-  useEffect(() => {
+    const getRolebyId = async () => {
+      try {
+        const { data } = await axios.get(`${API_BASE_URL}/roles/${id}`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setList(data.data);
+        setUpdatedData({
+          name: data.data.name,
+          description: data.data.description,
+          isDeleted: data.data.isDeleted,
+        });
+      } catch (error) {
+        console.log("Error:", error);
+      }
+    };
     getRolebyId();
   }, [id]);
   useEffect(() => {
@@ -195,4 +207,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default RoleListById;

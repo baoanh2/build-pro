@@ -4,7 +4,6 @@ import { redirect } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useAuthStore } from "../store/useAuthStore";
 import axios from "axios";
-import { useStore } from "../store/useStore";
 import Link from "next/link";
 import { useRoleStore } from "../store/useRoleStore";
 import {
@@ -18,63 +17,44 @@ import {
   IconButton,
   Switch,
   Button,
-  TablePagination,
-  Pagination,
   InputAdornment,
-  Typography,
   SxProps,
   Theme,
-  Skeleton,
-  TableCell,
-  TableRow,
 } from "@mui/material";
 import TableCustom from "../components/TableCustom";
 import EditIcon from "@mui/icons-material/Edit";
 import { AddCircle, Search } from "@mui/icons-material";
 import RoleBadge from "../components/RoleBadge";
-import Loading from "../components/Loading";
+import {
+  selectUsers,
+  selectSearch,
+  selectPageNumber,
+  selectFilterByRole,
+  selectTotalPages,
+} from "../stores/user/selectors";
+import { useUserStore } from "../stores/user/store";
+import { lowercaseFirstLetter, capitalizeFirstLetter } from "../utils/helpers";
 
-const page = () => {
-  // await new Promise((resolve) => setTimeout(resolve, 2000));
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const PageOfUser = () => {
   const { token, session } = useAuthStore();
   const { roles, fetchRole } = useRoleStore();
-  const [role, setRole] = useState<any>("");
-  const [search, setSearch] = useState<any>("");
-  const [list, setList] = useState<any[] | undefined>();
-  const [page, setPage] = useState<number>(1);
-  const [totalPages, setTotalPages] = useState<number>(1);
   const [order, setOrder] = useState<"asc" | "desc">("asc");
   const [orderBy, setOrderBy] = useState<string>("");
-  const fetchData = async () => {
-    try {
-      const { data } = await axios.get(
-        `${API_BASE_URL}/users?pageNumber=${page}${
-          role && `&filter=role%2Cstring%2Cequal%2C${role}`
-        }&searchText=${search}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      const listOfData = data?.data.results;
-      setList(listOfData);
-      setTotalPages(data?.data.totalPages);
-      console.log(listOfData);
-      console.log(listOfData);
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-  useEffect(() => {
-    fetchData();
-  }, [search, role, page]);
+
+  const users = useUserStore(selectUsers);
+  const search = useUserStore(selectSearch);
+  const page = useUserStore(selectPageNumber);
+  const role = useUserStore(selectFilterByRole);
+  const totalPageNumber = useUserStore(selectTotalPages);
+  const fetchUsers = useUserStore((state: any) => state.fetchUsers);
+  const setSearch = useUserStore((state: any) => state.setSearch);
+  const setPage = useUserStore((state: any) => state.setPage);
+  const setRole = useUserStore((state: any) => state.setRole);
+
   useEffect(() => {
     fetchRole(token);
-    console.log(page);
   }, [page]);
+
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);
   };
@@ -87,28 +67,15 @@ const page = () => {
     const isAsc = orderBy === capitalizedProperty && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(capitalizedProperty);
-    // console.log(orderBy);
-    // console.log(order);
-    // console.log(property);
   };
-  const sortedUsers = list?.sort((a, b) => {
-    if (order === "asc") {
-      return a[orderBy] > b[orderBy] ? 1 : -1;
-    } else {
-      return a[orderBy] < b[orderBy] ? 1 : -1;
-    }
-  });
-  function lowercaseFirstLetter(val: string) {
-    return val.charAt(0).toLowerCase() + String(val).slice(1);
-  }
-  function capitalizeFirstLetter(val: string) {
-    return String(val).charAt(0).toUpperCase() + String(val).slice(1);
-  }
   useEffect(() => {
     if (!session) {
       redirect("/SignIn");
     }
   }, [session]);
+  useEffect(() => {
+    fetchUsers();
+  }, [search, role, page]);
   return (
     <Layout>
       <>
@@ -177,9 +144,9 @@ const page = () => {
           </Link>
         </div>
         <TableCustom
-          totalPageNumber={totalPages}
+          totalPageNumber={totalPageNumber}
           headCell={HeadCell}
-          dataSource={list}
+          dataSource={users}
           handlePageChange={handleChange}
           page={page}
           onSort={handleRequestSort}
@@ -190,7 +157,7 @@ const page = () => {
     </Layout>
   );
 };
-export default page;
+export default PageOfUser;
 interface HeadCell {
   id: string;
   label: string;

@@ -38,12 +38,10 @@ const authOptions: AuthOptions = {
             {
               username: credentials?.username,
               password: credentials?.password,
-            },
+            }
           );
-          console.log(credentials);
           if (res.status === 200 && res.data?.data) {
             const user = res.data.data;
-            console.log("✅ API Response:", user);
             return {
               id: user.userInformation.userId.toString(),
               name: `${user.userInformation.firstName} ${user.userInformation.lastName}`,
@@ -53,11 +51,9 @@ const authOptions: AuthOptions = {
               role: user.userInformation.role,
             };
           } else {
-            console.log("Invalid credentials");
             return null;
           }
         } catch (error) {
-          console.log(" Authorization Error:", error);
           return null;
         }
       },
@@ -83,10 +79,10 @@ const authOptions: AuthOptions = {
 
     async session({ session, token }) {
       session.user = {
-        id: token.id as string,
+        // id: token.id,
         name: token.name,
         email: token.email,
-        role: token.role,
+        // role: token.role,
       };
       session.accessToken = token.accessToken as string;
       session.refreshToken = token.refreshToken as string;
